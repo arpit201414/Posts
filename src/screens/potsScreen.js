@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native";
 import axios from "../api/axios";
 
 const PostScreen = ({ navigation }) => {
@@ -7,7 +7,6 @@ const PostScreen = ({ navigation }) => {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
 
-    console.log("currentPage-->>", currentPage, data.length)
 
     useEffect(() => {
         callApi();
@@ -30,13 +29,13 @@ const PostScreen = ({ navigation }) => {
                 page: currentPage
             }
         });
-
-        console.log("response-->>", response.data.hits)
         setData(response.data.hits);
     }
 
     const handlePage = async () => {
+        console.log("postScreen");
         setCurrentPage(current => current + 1)
+        console.log("currentPage-->>>", currentPage, data.length)
         const response = await axios.get("/search_by_date", {
             params: {
                 tags: "story",
@@ -64,29 +63,35 @@ const PostScreen = ({ navigation }) => {
     }
 
     return (
-        <View style={styles.container}>
-            <FlatList
-                data={data}
-                extraData
-                showsVerticalScrollIndicator={false}
-                keyExtractor={(item, index) => item + index}
-                renderItem={renderItem}
-                onEndReached={handlePage}
-            />
-        </View>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.view}>
+                <FlatList
+                    data={data}
+                    extraData
+                    showsVerticalScrollIndicator={false}
+                    keyExtractor={(item, index) => item + index}
+                    renderItem={renderItem}
+                    onEndReached={handlePage}
+                />
+            </View>
+        </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "#ffffff",
-        paddingHorizontal: 10,
-        flex: 1
+        flex: 1,
+
     },
     viewStyle: {
         borderWidth: 1,
         padding: 10,
-        marginVertical: 10
+        marginVertical: 10,
+        height: 120
+    },
+    view: {
+        paddingHorizontal: 10
     }
 })
 
